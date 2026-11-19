@@ -14,21 +14,23 @@ function Scatterplot({ width, height, data }) {
 
   const boundsHeight = height - MARGIN.top - MARGIN.bottom;
 
-  // Scales
+  // X scale
   const xScale = d3.scaleLinear().domain([0, 10]).range([0, boundsWidth]);
 
+  // Y scale
   const yScale = d3.scaleLinear().domain([0, 10]).range([boundsHeight, 0]);
 
-  // Circles
+  // Scatterplot circles
   const allShapes = data.map((d, i) => {
     return (
       <circle
         key={i}
-        r={7}
+        r={8}
         cx={xScale(d.x)}
         cy={yScale(d.y)}
-        fill="black"
-        fillOpacity={0.7}
+        fill="#f8e8fa"
+        stroke="#a451a5"
+        strokeWidth={1.5}
       />
     );
   });
@@ -37,14 +39,16 @@ function Scatterplot({ width, height, data }) {
     <svg width={width} height={height}>
       <g transform={`translate(${MARGIN.left}, ${MARGIN.top})`}>
         {/* Y axis */}
-        <AxisLeft yScale={yScale} pixelsPerTick={40} />
+        <AxisLeft yScale={yScale} pixelsPerTick={40} width={boundsWidth} />
 
         {/* X axis */}
         <AxisBottom xScale={xScale} pixelsPerTick={40} height={boundsHeight} />
 
-        {/* Scatterplot points */}
+        {/* Scatterplot circles */}
         {allShapes}
       </g>
     </svg>
   );
 }
+
+export default Scatterplot;
