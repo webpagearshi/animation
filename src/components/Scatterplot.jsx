@@ -36,7 +36,7 @@ function Scatterplot({ width, height, data }) {
   });
 
   return (
-    <svg width={width} height={height}>
+    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
       <g transform={`translate(${MARGIN.left}, ${MARGIN.top})`}>
         {/* Y axis */}
         <AxisLeft yScale={yScale} pixelsPerTick={40} width={boundsWidth} />

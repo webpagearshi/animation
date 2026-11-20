@@ -26,3 +26,8 @@
 .button-container button.active:hover {
   background-color: #181818;
 }
+.chart-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}

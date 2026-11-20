@@ -1,11 +1,15 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Scatterplot from "./components/Scatterplot";
 import "./App.css";
+import { useDimensions } from "./hooks/useDimensions";
 
 import { linear, curve, badRepartition, outlier } from "./components/data";
 
 function App() {
   const [selectedDataset, setSelectedDataset] = useState(linear);
+  const containerRef = useRef(null);
+
+  const { width } = useDimensions(containerRef);
 
   return (
     <div>
@@ -41,7 +45,11 @@ function App() {
         </button>
       </div>
 
-      <Scatterplot width={700} height={500} data={selectedDataset} />
+      <div ref={containerRef} className="chart-container">
+        {width > 0 && (
+          <Scatterplot width={width} height={500} data={selectedDataset} />
+        )}
+      </div>
     </div>
   );
 }
