@@ -1,46 +1,30 @@
 import { useState, useRef } from "react";
 import "./App.css";
+
 import { useDimensions } from "./hooks/useDimensions";
 import Scatterplot from "./components/Scatterplot";
 
 import { linear, curve, badRepartition, outlier } from "./components/data";
 
-function calculateStatistics(data) {
-  const n = data.length;
-
-  const meanX = data.reduce((sum, d) => sum + d.x, 0) / n;
-
-  const meanY = data.reduce((sum, d) => sum + d.y, 0) / n;
-
-  let numerator = 0;
-  let sumX = 0;
-  let sumY = 0;
-
-  data.forEach((d) => {
-    const xDiff = d.x - meanX;
-    const yDiff = d.y - meanY;
-
-    numerator += xDiff * yDiff;
-    sumX += xDiff * xDiff;
-    sumY += yDiff * yDiff;
-  });
-
-  const correlation = numerator / Math.sqrt(sumX * sumY);
-
-  const rSquared = correlation * correlation;
-
-  return {
-    correlation,
-    rSquared,
-  };
-}
+import {
+  linearRegression,
+  computeR2,
+  computeCorrelation,
+} from "./components/regression";
 
 function App() {
   const [selectedDataset, setSelectedDataset] = useState(linear);
-  const { correlation, rSquared } = calculateStatistics(selectedDataset);
 
+  // Calculate regression parameters for the selected dataset
+  const { slope, intercept } = linearRegression(selectedDataset);
+
+  // Calculate R² and correlation
+  const rSquared = computeR2(selectedDataset, slope, intercept);
+
+  const correlation = computeCorrelation(selectedDataset);
+
+  // Responsive chart dimensions
   const containerRef = useRef(null);
-
   const { width } = useDimensions(containerRef);
 
   return (
@@ -48,7 +32,7 @@ function App() {
       <h1>Scatterplot Animation</h1>
 
       <div ref={containerRef} className="chart-container">
-        {/* Buttons */}
+        {/* Dataset selection buttons */}
         <div className="button-container">
           <button
             className={selectedDataset === linear ? "active" : ""}
@@ -79,14 +63,22 @@ function App() {
           </button>
         </div>
 
+        {/* Regression statistics */}
         <div className="statistics">
           <span>Correlation: {correlation.toFixed(2)}</span>
+
           <span>R²: {rSquared.toFixed(2)}</span>
         </div>
 
-        {/* Chart */}
+        {/* Scatterplot */}
         {width > 0 && (
-          <Scatterplot width={width} height={500} data={selectedDataset} />
+          <Scatterplot
+            width={width}
+            height={500}
+            data={selectedDataset}
+            slope={slope}
+            intercept={intercept}
+          />
         )}
       </div>
     </div>
