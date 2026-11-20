@@ -19,11 +19,11 @@ function AxisBottom({ xScale, pixelsPerTick, height }) {
   return (
     <>
       {ticks.map(({ value, xOffset }) => (
-        <g key={value} transform={`translate(${xOffset}, 0)`}>
-          {/* Grid line */}
+        <g key={value} transform={`translate(${xOffset}, ${height})`}>
+          {/* Vertical grid line */}
           <line
             y1={TICK_LENGTH}
-            y2={-height - TICK_LENGTH}
+            y2={-height}
             stroke="#D2D7D3"
             strokeWidth={0.5}
             shapeRendering="crispEdges"
