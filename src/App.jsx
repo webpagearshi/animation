@@ -5,8 +5,39 @@ import Scatterplot from "./components/Scatterplot";
 
 import { linear, curve, badRepartition, outlier } from "./components/data";
 
+function calculateStatistics(data) {
+  const n = data.length;
+
+  const meanX = data.reduce((sum, d) => sum + d.x, 0) / n;
+
+  const meanY = data.reduce((sum, d) => sum + d.y, 0) / n;
+
+  let numerator = 0;
+  let sumX = 0;
+  let sumY = 0;
+
+  data.forEach((d) => {
+    const xDiff = d.x - meanX;
+    const yDiff = d.y - meanY;
+
+    numerator += xDiff * yDiff;
+    sumX += xDiff * xDiff;
+    sumY += yDiff * yDiff;
+  });
+
+  const correlation = numerator / Math.sqrt(sumX * sumY);
+
+  const rSquared = correlation * correlation;
+
+  return {
+    correlation,
+    rSquared,
+  };
+}
+
 function App() {
   const [selectedDataset, setSelectedDataset] = useState(linear);
+  const { correlation, rSquared } = calculateStatistics(selectedDataset);
 
   const containerRef = useRef(null);
 
@@ -46,6 +77,11 @@ function App() {
           >
             Outlier
           </button>
+        </div>
+
+        <div className="statistics">
+          <span>Correlation: {correlation.toFixed(2)}</span>
+          <span>R²: {rSquared.toFixed(2)}</span>
         </div>
 
         {/* Chart */}
