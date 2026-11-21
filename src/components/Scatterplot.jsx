@@ -1,4 +1,5 @@
 import * as d3 from "d3";
+import { motion, AnimatePresence } from "motion/react";
 import AxisLeft from "./AxisLeft";
 import AxisBottom from "./AxisBottom";
 
@@ -9,7 +10,7 @@ const MARGIN = {
   left: 60,
 };
 
-function Scatterplot({ width, height, data, slope, intercept }) {
+function Scatterplot({ width, height, data, slope, intercept, datasetName }) {
   const boundsWidth = width - MARGIN.left - MARGIN.right;
   const boundsHeight = height - MARGIN.top - MARGIN.bottom;
 
@@ -32,18 +33,11 @@ function Scatterplot({ width, height, data, slope, intercept }) {
   const y1 = slope * x1 + intercept;
   const y2 = slope * x2 + intercept;
 
-  // Scatterplot circles
-  const allShapes = data.map((d, i) => (
-    <circle
-      key={i}
-      r={8}
-      cx={xScale(d.x)}
-      cy={yScale(d.y)}
-      fill="#f8e8fa"
-      stroke="#a451a5"
-      strokeWidth={1.5}
-    />
-  ));
+  // Scatterplot circles with unique dataset IDs
+  const allShapes = data.map((d, i) => ({
+    ...d,
+    id: `${datasetName}-${i}`,
+  }));
 
   return (
     <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
@@ -61,7 +55,7 @@ function Scatterplot({ width, height, data, slope, intercept }) {
         {/* X axis */}
         <AxisBottom xScale={xScale} pixelsPerTick={40} height={boundsHeight} />
 
-        {/* Regression line and data points */}
+        {/* Regression line and animated points */}
         <g clipPath="url(#plot-area-clip)">
           {/* Linear regression line */}
           <line
@@ -70,11 +64,42 @@ function Scatterplot({ width, height, data, slope, intercept }) {
             x2={xScale(x2)}
             y2={yScale(y2)}
             stroke="#181818"
-            strokeWidth={1.0}
+            strokeWidth={1}
           />
 
-          {/* Scatterplot circles */}
-          {allShapes}
+          {/* Animated scatterplot circles */}
+          <AnimatePresence mode="sync">
+            {allShapes.map((d) => (
+              <motion.circle
+                key={d.id}
+                r={8}
+                fill="#f8e8fa"
+                stroke="#a451a5"
+                strokeWidth={1.5}
+                // New circles enter from the left
+                initial={{
+                  cx: -20,
+                  cy: yScale(d.y),
+                  opacity: 0,
+                }}
+                // Move to their actual positions
+                animate={{
+                  cx: xScale(d.x),
+                  cy: yScale(d.y),
+                  opacity: 1,
+                }}
+                // Old circles exit to the right
+                exit={{
+                  cx: boundsWidth + 30,
+                  opacity: 0,
+                }}
+                transition={{
+                  duration: 0.8,
+                  ease: "easeInOut",
+                }}
+              />
+            ))}
+          </AnimatePresence>
         </g>
       </g>
     </svg>

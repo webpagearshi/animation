@@ -14,6 +14,7 @@ import {
 
 function App() {
   const [selectedDataset, setSelectedDataset] = useState(linear);
+  const [selectedDatasetName, setSelectedDatasetName] = useState("linear");
 
   // Calculate regression parameters for the selected dataset
   const { slope, intercept } = linearRegression(selectedDataset);
@@ -35,29 +36,41 @@ function App() {
         {/* Dataset selection buttons */}
         <div className="button-container">
           <button
-            className={selectedDataset === linear ? "active" : ""}
-            onClick={() => setSelectedDataset(linear)}
+            className={selectedDatasetName === "linear" ? "active" : ""}
+            onClick={() => {
+              setSelectedDataset(linear);
+              setSelectedDatasetName("linear");
+            }}
           >
             Linear
           </button>
 
           <button
-            className={selectedDataset === curve ? "active" : ""}
-            onClick={() => setSelectedDataset(curve)}
+            className={selectedDatasetName === "curve" ? "active" : ""}
+            onClick={() => {
+              setSelectedDataset(curve);
+              setSelectedDatasetName("curve");
+            }}
           >
             Curve
           </button>
 
           <button
-            className={selectedDataset === badRepartition ? "active" : ""}
-            onClick={() => setSelectedDataset(badRepartition)}
+            className={selectedDatasetName === "badRepartition" ? "active" : ""}
+            onClick={() => {
+              setSelectedDataset(badRepartition);
+              setSelectedDatasetName("badRepartition");
+            }}
           >
             Bad Repartition
           </button>
 
           <button
-            className={selectedDataset === outlier ? "active" : ""}
-            onClick={() => setSelectedDataset(outlier)}
+            className={selectedDatasetName === "outlier" ? "active" : ""}
+            onClick={() => {
+              setSelectedDataset(outlier);
+              setSelectedDatasetName("outlier");
+            }}
           >
             Outlier
           </button>
@@ -78,6 +91,7 @@ function App() {
             data={selectedDataset}
             slope={slope}
             intercept={intercept}
+            datasetName={selectedDatasetName}
           />
         )}
       </div>
